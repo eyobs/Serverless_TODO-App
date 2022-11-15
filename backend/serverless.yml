@@ -1,7 +1,8 @@
 # TODO: Change the name of the org 
-org: sudkul
-app: serverless-todo-app
-service: serverless-todo-app
+org: eyobs
+app: serverless-todo-app-1
+service: serverless-todo-app-1
+frameworkVersion: '2.21.1'
 
 plugins:
   - serverless-webpack
@@ -11,7 +12,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs12.x
-  lambdaHashingVersion: '20201221'
+  # lambdaHashingVersion: '20201221'
 
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
@@ -27,7 +28,8 @@ provider:
     TODOS_CREATED_AT_INDEX: CreatedAtIndex
     ATTACHMENT_S3_BUCKET: serverless-c4-todo-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
-
+    PROJECT_NAME: serverless-todo-app-1
+    INDEX_NAME: ${self:provider.environment.TODOS_CREATED_AT_INDEX}
   logs:
     # Enable API Gateway logs
     restApi: true
