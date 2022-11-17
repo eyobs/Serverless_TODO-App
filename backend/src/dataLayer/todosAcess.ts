@@ -70,7 +70,7 @@ export class TodosAccess {
         return todoUpdate
     }
 
-    async deleteTodoItem(todoId: string, userId: string): Promise<void> {
+    async deleteTodoItem(todoId: string, userId: string): Promise<string> {
         logger.info('function delete todo item called!')
 
         await this.docClient.delete({
@@ -80,6 +80,8 @@ export class TodosAccess {
                 userId
             }
         }).promise()
+
+        return "" as string
     }
 
     async updateTodoAttachmentUrl(todoId: string, userId: string, attachmentUrl: string): Promise<void> {

@@ -43,3 +43,8 @@ export async function updateTodo(todoId:string, userId:string, todoUpdate: Updat
     logger.info('update todo function called')
     return  todosAcess.updateTodoItem(todoId, userId, todoUpdate)
 }
+
+export async function deleteTodo(todoId: string, userId:string): Promise<string> {
+    logger.info('function delete todo called')
+    return todosAcess.deleteTodoItem(todoId, userId)
+}
