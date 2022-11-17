@@ -2,9 +2,10 @@ import { TodosAccess } from '../dataLayer/todosAcess'
 import { AttachmentUtils } from '../helpers/attachmentUtils';
 import { TodoItem } from '../models/TodoItem'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
-// import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
+import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 import { createLogger } from '../utils/logger'
 import * as uuid from 'uuid'
+import { TodoUpdate } from '../models/TodoUpdate';
 // import * as createError from 'http-errors'
 
 // TODO: Implement businessLogic
@@ -36,4 +37,9 @@ export async function createTodo(newTodo: CreateTodoRequest, userId: string): Pr
     }
     
     return await todosAcess.createTodoItem(newItem)
+}
+
+export async function updateTodo(todoId:string, userId:string, todoUpdate: UpdateTodoRequest): Promise<TodoUpdate> {
+    logger.info('update todo function called')
+    return  todosAcess.updateTodoItem(todoId, userId, todoUpdate)
 }
