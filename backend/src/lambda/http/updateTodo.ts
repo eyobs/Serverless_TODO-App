@@ -18,7 +18,7 @@ export const handler = middy(
     await updateTodo(todoId, userId ,updatedTodo)
 
     return {
-      statusCode: 204,
+      statusCode: 200,
       body:''
     }
   }
