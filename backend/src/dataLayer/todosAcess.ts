@@ -44,7 +44,7 @@ export class TodosAccess {
 
 
     async getTodoItem(todoId: string, userId: string): Promise<TodoItem> {
-        logger.info(`Getting todo ${todoId} from ${this.todosTable}`)
+        logger.info(`function getTodoItem called`)
     
         const params = {
             TableName: this.todosTable,
@@ -119,7 +119,7 @@ export class TodosAccess {
     }
 
     async updateAttachmentUrl(todoId: string, userId: string, attachmentUrl: string) {
-        logger.info(`Updating attachment URL for todo ${todoId} in ${this.todosTable}`)
+        logger.info(`Updating attachment URL!`)
         
         const params = {
             TableName: this.todosTable,
