@@ -46,14 +46,15 @@ export class TodosAccess {
     async getTodoItem(todoId: string, userId: string): Promise<TodoItem> {
         logger.info(`Getting todo ${todoId} from ${this.todosTable}`)
     
-        const result = await this.docClient.get({
-          TableName: this.todosTable,
-          Key: {
-            todoId,
-            userId
-          }
-        }).promise()
-    
+        const params = {
+            TableName: this.todosTable,
+            Key: {
+              todoId,
+              userId
+            }
+        }
+
+        const result = await this.docClient.get(params).promise()
         const item = result.Item
     
         return item as TodoItem
@@ -78,7 +79,7 @@ export class TodosAccess {
     async updateTodoItem(todoId: string, userId: string, todoUpdate: TodoUpdate): Promise<TodoUpdate>{
         logger.info("function update todo called!")
 
-        const result = await this.docClient.update({
+        const params = {
             TableName: this.todosTable,
             Key:{
                 todoId,
@@ -94,14 +95,16 @@ export class TodosAccess {
                 "#name": "name"
             },
             ReturnValues: "ALL_NEW"
-        }).promise()
+        }
+
+        const result = await this.docClient.update(params).promise()
         logger.info("Todo item updated", result)
 
         const attributes = result.Attributes;
         return attributes as TodoUpdate
     }
 
-    async deleteTodoItem(todoId: string, userId: string): Promise<string> {
+    async deleteTodoItem(todoId: string, userId: string){
         logger.info("function delete todo item called!")
 
         const params = {
@@ -113,25 +116,23 @@ export class TodosAccess {
         }
 
         await this.docClient.delete(params).promise()
-        // console.log(response)
-        return "" as string
     }
 
     async updateAttachmentUrl(todoId: string, userId: string, attachmentUrl: string) {
         logger.info(`Updating attachment URL for todo ${todoId} in ${this.todosTable}`)
-    
-        await this.docClient.update({
-          TableName: this.todosTable,
-          Key: {
-            todoId,
-            userId
-          },
-          UpdateExpression: 'set attachmentUrl = :attachmentUrl',
-          ExpressionAttributeValues: {
-            ':attachmentUrl': attachmentUrl
-          }
-        }).promise()
+        
+        const params = {
+            TableName: this.todosTable,
+            Key: {
+              todoId,
+              userId
+            },
+            UpdateExpression: 'set attachmentUrl = :attachmentUrl',
+            ExpressionAttributeValues: {
+              ':attachmentUrl': attachmentUrl
+            }
+        }
+
+        await this.docClient.update(params).promise()
       }
-
-
 }

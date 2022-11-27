@@ -20,11 +20,13 @@ export class AttachmentUtils
     }
 
     async getUploadUrl(attachmentId: string): Promise<string> {
-        const url = this.s3.getSignedUrl('putObject', {
+
+        const params = {
             Bucket: this.bucketName,
             Key: attachmentId,
             Expires: urlExpiration
-        })
+        }
+        const url = this.s3.getSignedUrl('putObject', params)
 
         return url
     }

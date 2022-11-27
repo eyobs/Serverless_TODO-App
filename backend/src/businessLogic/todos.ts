@@ -22,18 +22,18 @@ export async function getTodosForUser(userId: string): Promise<TodoItem[]> {
 }
 
 
-export async function createTodo(newTodo: CreateTodoRequest, userId: string): Promise<TodoItem> {
+export async function createTodo(CreateTodo: CreateTodoRequest, userId: string): Promise<TodoItem> {
     logger.info('Create todo function called')
 
-    const todoId = uuid.v4()
     const createdAt = new Date().toISOString()
+    const todoId = uuid.v4()
     const newItem = {
         userId,
         todoId,
         createdAt,
         done: false,
         AttachmentUrl: null,
-        ...newTodo
+        ...CreateTodo
     }
     
     return await todosAcess.createTodoItem(newItem)
@@ -44,9 +44,9 @@ export async function updateTodo(todoId:string, userId:string, todoUpdate: Updat
     return  await todosAcess.updateTodoItem(todoId, userId, todoUpdate)
 }
 
-export async function deleteTodo(todoId: string, userId:string): Promise<string> {
+export async function deleteTodo(todoId: string, userId:string){
     logger.info('function delete todo called')
-    return await todosAcess.deleteTodoItem(todoId, userId)
+    await todosAcess.deleteTodoItem(todoId, userId)
 }
 
 
@@ -65,7 +65,7 @@ export async function updateAttachmentUrl(userId: string, todoId: string, attach
     const item = await todosAcess.getTodoItem(todoId, userId)
   
     if (item.userId !== userId) {
-      throw new Error('User is not authorized to update item')
+      throw new Error('User not authorized to update item')
     }
     
     logger.info(`Attachement URL ${attachmentUrl}`)
