@@ -91,9 +91,7 @@ export class TodosAccess {
                 ":done": todoUpdate.done
             },
             ExpressionAttributeNames: {
-                "#name": "name",
-                "#dueDate": "dueDate",
-                "#done": "done"
+                "#name": "name"
             },
             ReturnValues: "ALL_NEW"
         }).promise()
