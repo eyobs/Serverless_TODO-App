@@ -1,5 +1,5 @@
 import { TodosAccess } from '../dataLayer/todosAcess'
-import { AttachmentUtils } from '../helpers/attachmentUtils';
+import { AttachmentUtils } from '../fileStorage/attachmentUtils';
 import { TodoItem } from '../models/TodoItem'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
@@ -27,13 +27,12 @@ export async function createTodo(newTodo: CreateTodoRequest, userId: string): Pr
 
     const todoId = uuid.v4()
     const createdAt = new Date().toISOString()
-    const s3AttachmentUrl = attachmentUtils.getAttachmentUrl(todoId)
     const newItem = {
         userId,
         todoId,
         createdAt,
         done: false,
-        s3AttachmentUrl: s3AttachmentUrl,
+        AttachmentUrl: null,
         ...newTodo
     }
     
@@ -50,8 +49,27 @@ export async function deleteTodo(todoId: string, userId:string): Promise<string>
     return await todosAcess.deleteTodoItem(todoId, userId)
 }
 
-export async function getUploadURL(todoId: string): Promise<string> {
-    logger.info('Create attachment function called',todoId)
-    return await todosAcess.getUploadUrl(todoId)
+
+export async function generateUploadUrl(attachmentId: string): Promise<string> {
+    logger.info(`Generating upload URL for attachment ${attachmentId}`)
+    const uploadUrl = await attachmentUtils.getUploadUrl(attachmentId)
+  
+    return uploadUrl
 }
+
+
+export async function updateAttachmentUrl(userId: string, todoId: string, attachmentId: string) {
+    logger.info(`Generating attachment URL for attachment ${attachmentId}`)
+  
+    const attachmentUrl = await attachmentUtils.getAttachmentUrl(attachmentId)
+    const item = await todosAcess.getTodoItem(todoId, userId)
+  
+    if (item.userId !== userId) {
+      throw new Error('User is not authorized to update item')
+    }
+    
+    logger.info(`Attachement URL ${attachmentUrl}`)
+    await todosAcess.updateAttachmentUrl(todoId, userId, attachmentUrl)
+  }
+  
 

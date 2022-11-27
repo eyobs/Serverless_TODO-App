@@ -1,7 +1,7 @@
 # TODO: Change the name of the org 
 org: eyobs
-app: serverless-todo-app-1
-service: serverless-todo-app-1
+app: serverless-todo-app-01
+service: serverless-todo-app-01
 frameworkVersion: '2.21.1'
 
 plugins:
@@ -28,8 +28,8 @@ provider:
   environment:
     TODOS_TABLE: Todos-${self:provider.stage}
     TODOS_CREATED_AT_INDEX: CreatedAtIndex
-    ATTACHMENT_S3_BUCKET: serverless-c4s-todo-images-${self:provider.stage}
-    SIGNED_URL_EXPIRATION: 300
+    ATTACHMENT_S3_BUCKET: serverless-todo-app-01-images-${self:provider.stage}
+    SIGNED_URL_EXPIRATION: 600
     PROJECT_NAME: serverless-todo-app-1
     INDEX_NAME: ${self:provider.environment.TODOS_CREATED_AT_INDEX}
   logs:
@@ -64,12 +64,6 @@ custom:
 
 
 functions:
-  hello:
-    handler: handler.hello
-    events:
-      - httpApi:
-          path: /
-          method: get
 
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
@@ -84,7 +78,7 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
-    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}--get-todo-role-${self:provider.stage}
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-get-todo-role-${self:provider.stage}
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -155,6 +149,7 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:UpdateItem
+          - dynamodb:GetItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
       - Effect: Allow
         Action:
@@ -198,13 +193,14 @@ functions:
     iamRoleStatements:
       - Effect: Allow
         Action: 
-          - s3:*
+          - s3:PutObject
           - xray:PutTraceSegments
         Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
       - Effect: Allow
         Action:
           - dynamodb:Query
-          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+          - dynamodb:GetItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
       - Effect: Allow
         Action:
@@ -297,7 +293,7 @@ resources:
                 - PUT
               AllowedOrigins:
                 - '*'
-              MaxAge: 300
+              MaxAge: 4000
 
 
 
