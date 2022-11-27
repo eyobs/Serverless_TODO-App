@@ -29,7 +29,7 @@ provider:
     TODOS_TABLE: Todos-${self:provider.stage}
     TODOS_CREATED_AT_INDEX: CreatedAtIndex
     ATTACHMENT_S3_BUCKET: serverless-todo-app-01-images-${self:provider.stage}
-    SIGNED_URL_EXPIRATION: 600
+    SIGNED_URL_EXPIRATION: 2000
     PROJECT_NAME: serverless-todo-app-1
     INDEX_NAME: ${self:provider.environment.TODOS_CREATED_AT_INDEX}
   logs:
