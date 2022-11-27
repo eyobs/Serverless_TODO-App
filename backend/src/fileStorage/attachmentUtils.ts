@@ -5,14 +5,16 @@ const XAWS = AWSXRay.captureAWS(AWS)
 
 // TODO: Implement the fileStogare logic
 
-const s3BucketName = process.env.ATTACHMENT_S3_BUCKET
-const urlExpiration = process.env.SIGNED_URL_EXPIRATION
+// const s3BucketName = process.env.ATTACHMENT_S3_BUCKET
+
 
 export class AttachmentUtils
  {
     constructor(
         private readonly s3 = new XAWS.S3({ signatureVersion: 'v4' }),
-        private readonly bucketName = s3BucketName
+        // private readonly urlExpiration = process.env.SIGNED_URL_EXPIRATION,
+        private readonly urlExpiration = 2000,
+        private readonly bucketName = process.env.ATTACHMENT_S3_BUCKET
     ) {}
 
     async getAttachmentUrl(attachmentId: string): Promise<string>{
@@ -24,7 +26,7 @@ export class AttachmentUtils
         const params = {
             Bucket: this.bucketName,
             Key: attachmentId,
-            Expires: urlExpiration
+            Expires: this.urlExpiration
         }
         const url = this.s3.getSignedUrl('putObject', params)
 
