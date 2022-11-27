@@ -1,10 +1,12 @@
 import { TodosAccess } from '../dataLayer/todosAcess'
-import { AttachmentUtils } from '../helpers/attachmentUtils';
+import { AttachmentUtils } from '../fileStorage/attachmentUtils';
 import { TodoItem } from '../models/TodoItem'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
-// import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
+import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 import { createLogger } from '../utils/logger'
 import * as uuid from 'uuid'
+import { TodoUpdate } from '../models/TodoUpdate';
+
 // import * as createError from 'http-errors'
 
 // TODO: Implement businessLogic
@@ -25,15 +27,49 @@ export async function createTodo(newTodo: CreateTodoRequest, userId: string): Pr
 
     const todoId = uuid.v4()
     const createdAt = new Date().toISOString()
-    const s3AttachmentUrl = attachmentUtils.getAttachmentUrl(todoId)
     const newItem = {
         userId,
         todoId,
         createdAt,
         done: false,
-        s3AttachmentUrl: s3AttachmentUrl,
+        AttachmentUrl: null,
         ...newTodo
     }
     
     return await todosAcess.createTodoItem(newItem)
 }
+
+export async function updateTodo(todoId:string, userId:string, todoUpdate: UpdateTodoRequest): Promise<TodoUpdate> {
+    logger.info('update todo function called')
+    return  await todosAcess.updateTodoItem(todoId, userId, todoUpdate)
+}
+
+export async function deleteTodo(todoId: string, userId:string): Promise<string> {
+    logger.info('function delete todo called')
+    return await todosAcess.deleteTodoItem(todoId, userId)
+}
+
+
+export async function generateUploadUrl(attachmentId: string): Promise<string> {
+    logger.info(`Generating upload URL for attachment ${attachmentId}`)
+    const uploadUrl = await attachmentUtils.getUploadUrl(attachmentId)
+  
+    return uploadUrl
+}
+
+
+export async function updateAttachmentUrl(userId: string, todoId: string, attachmentId: string) {
+    logger.info(`Generating attachment URL for attachment ${attachmentId}`)
+  
+    const attachmentUrl = await attachmentUtils.getAttachmentUrl(attachmentId)
+    const item = await todosAcess.getTodoItem(todoId, userId)
+  
+    if (item.userId !== userId) {
+      throw new Error('User is not authorized to update item')
+    }
+    
+    logger.info(`Attachement URL ${attachmentUrl}`)
+    await todosAcess.updateAttachmentUrl(todoId, userId, attachmentUrl)
+  }
+  
+
